@@ -1,0 +1,20 @@
+---
+this is basically what i kinda want jig to look like
+---
+
+errors = read.keep{_.has(" ERROR ")}  # read is input, _ is the comprehension element
+
+n = 0
+for errors |line| {  # for line in errors
+    if line.words[3] == "404" then n += 1
+}
+
+say "404s: {n} of {errors.len}"  # interpolation
+
+i = 1
+while i <= 3 {
+    say i * i
+    i += 1
+}
+
+say errors.map{_.words[3]}.tally.head(3) # prints one row per [count, code]
