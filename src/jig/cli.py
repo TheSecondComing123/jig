@@ -14,7 +14,7 @@ def repl():
             print(f"> {run(code, env)}")
         except EOFError:
             break
-        except Exception as err:
+        except Exception as err:  # noqa: BLE001
             print(f"error: {getattr(err, 'orig_exc', err)}")
 
 
@@ -23,10 +23,12 @@ def main():
         repl()
     if len(argv) > 1:
         if argv[1] == "-e":
-            print(run(argv[2]))
+            value = run(argv[2])
         else:
             with open(argv[1], "r") as f:
-                print(run(f.read()))
+                value = run(f.read())
+        if value is not None:
+            print(value)
 
 
 if __name__ == "__main__":

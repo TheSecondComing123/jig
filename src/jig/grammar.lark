@@ -1,0 +1,33 @@
+?start: _NL? [stmt (_NL stmt)* _NL?] -> program
+
+?stmt: NAME ":=" expr -> declare
+     | NAME "=" expr -> assign
+     | "say" expr -> say
+     | expr
+
+?expr: sum
+
+?sum: product
+    | sum ADD product -> binary
+
+?product: power
+        | product MUL power -> binary
+
+?power: atom
+      | atom POW power -> binary
+      | UNARY power -> unary
+
+?atom: NUMBER
+     | NAME -> name
+     | "(" expr ")"
+
+ADD: "+" | "-"
+MUL: "*" | "//" | "/" | "%"
+POW: "^"
+UNARY: "-"
+
+NUMBER: /\d[\d_]*/
+NAME: /[A-Za-z_]\w*/
+_NL: /\n+/
+
+%ignore /[ \t\r]+/

@@ -2,26 +2,7 @@ import operator
 
 from lark import Lark, Transformer
 
-GRAMMAR = r"""
-?start: _NL? [stmt (_NL stmt)* _NL?] -> program
-?stmt: NAME ":=" sum -> declare | NAME "=" sum -> assign | sum
-?sum: product | sum ADD product -> binary
-?product: power | product MUL power -> binary
-?power: atom POW power -> binary | UNARY power -> unary | atom
-?atom: NUMBER | NAME -> name | "(" sum ")"
-
-ADD: "+" | "-"
-MUL: "*" | "//" | "/" | "%"
-POW: "^"
-UNARY: "-"
-NUMBER: /\d[\d_]*/
-NAME: /[A-Za-z_]\w*/
-_NL: /\n+/
-
-%ignore /[ \t\r]+/
-"""
-
-parser = Lark(GRAMMAR)
+parser = Lark.open("grammar.lark", rel_to=__file__)
 
 BINARY_OPS = {
     "+": operator.add,
@@ -45,6 +26,9 @@ class Evaluator(Transformer):
 
     def program(self, stmts):
         return stmts[-1]
+
+    def say(self, args):
+        print(args[0])
 
     def declare(self, args):
         name, value = args
