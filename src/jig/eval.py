@@ -2,7 +2,7 @@ import operator
 
 from lark import Lark, Transformer
 
-parser = Lark.open("grammar.lark", rel_to=__file__)
+parser = Lark.open("grammar.lark", rel_to=__file__, parser="lalr")
 
 BINARY_OPS = {
     "+": operator.add,
