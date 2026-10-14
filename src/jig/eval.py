@@ -14,6 +14,15 @@ BINARY_OPS = {
     "^": operator.pow,
 }
 
+CMP_OPS = {
+    "==": operator.eq,
+    "!=": operator.ne,
+    "<": operator.lt,
+    "<=": operator.le,
+    ">": operator.gt,
+    ">=": operator.ge,
+}
+
 UNARY_OPS = {
     "-": operator.neg,
 }
@@ -52,6 +61,16 @@ class Evaluator(Transformer):
     def binary(self, args):
         left, op, right = args
         return BINARY_OPS[op](left, right)
+
+    def compare(self, args):
+        left = args[0]
+        for i in range(1, len(args), 2):
+            op = args[i]
+            right = args[i + 1]
+            if not CMP_OPS[op](left, right):
+                return 0
+            left = right
+        return 1
 
     def unary(self, args):
         op, operand = args

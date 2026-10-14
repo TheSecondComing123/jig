@@ -6,7 +6,10 @@
      | "say" expr -> say
      | expr
 
-?expr: sum
+?expr: cmp
+
+?cmp: sum
+   | sum (CMP sum)+ -> compare
 
 ?sum: product
     | sum ADD product -> binary
@@ -23,6 +26,7 @@
      | "(" expr ")"
 
 AUGOP: /(\+|-|\*|\/\/|\/|%)=/
+CMP: "==" | "!=" | "<=" | ">=" | "<" | ">"
 ADD: "+" | "-"
 MUL: "*" | "//" | "/" | "%"
 POW: "^"
