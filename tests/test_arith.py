@@ -24,6 +24,22 @@ def test_arith(src, output):
     assert run(src) == output
 
 
+@pytest.mark.parametrize(
+    "op,output", [("+=", 0), ("-=", 2), ("*=", -1), ("/=", -1), ("//=", -1), ("%=", 0)]
+)
+def test_augmented_assignment(op, output):
+    assert (
+        run(
+            f"""
+x := 1
+x {op} -1
+x
+"""
+        )
+        == output
+    )
+
+
 def test_variables():
     assert (
         run(

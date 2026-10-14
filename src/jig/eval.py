@@ -38,6 +38,10 @@ class Evaluator(Transformer):
         name, value = args
         self.env[name] = value
 
+    def augset(self, args):
+        name, op, value = args
+        self.env[name] = BINARY_OPS[op[:-1]](self.env[name], value)
+
     def name(self, args):
         name = args[0]
         return self.env[name]

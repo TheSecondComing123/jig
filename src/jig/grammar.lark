@@ -2,6 +2,7 @@
 
 ?stmt: NAME ":=" expr -> declare
      | NAME "=" expr -> assign
+     | NAME AUGOP expr -> augset
      | "say" expr -> say
      | expr
 
@@ -21,6 +22,7 @@
      | NAME -> name
      | "(" expr ")"
 
+AUGOP: /(\+|-|\*|\/\/|\/|%)=/
 ADD: "+" | "-"
 MUL: "*" | "//" | "/" | "%"
 POW: "^"
