@@ -24,6 +24,19 @@ def test_arith(src, output):
     assert run(src) == output
 
 
+def test_variables():
+    assert (
+        run(
+            """
+x := 1
+x = -1
+x
+"""
+        )
+        == -1
+    )
+
+
 @pytest.mark.parametrize("src", ["1 / 0", "1 // 0", "1 % 0"])
 def test_zero_division(src):
     with pytest.raises(VisitError):

@@ -5,14 +5,17 @@ from jig import run
 
 def repl():
     print("jig repl")
+    env = {}
     while True:
         try:
             code = input("$ ")
             if code.strip().lower() in ["", "exit", "quit", "e", "q"]:
                 break
-            print(f"> {run(code)}")
+            print(f"> {run(code, env)}")
         except EOFError:
             break
+        except Exception as err:
+            print(f"error: {getattr(err, 'orig_exc', err)}")
 
 
 def main():
