@@ -14,6 +14,16 @@ for (1..3).rev |n| { say "{n}..." }
 say "jig!"
 ```
 
+## Philosophy
+
+Here's the set of guidelines that I use to shape jig:
+
+- whatever is most common should be shortest and easiest to write
+- all syntax should be easy to understand
+- few special symbols each doing one thing only
+- as few ways as possible to do one thing.
+- fail fast
+
 ## Try it!
 
 ```shell
