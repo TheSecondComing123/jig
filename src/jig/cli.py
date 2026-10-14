@@ -11,7 +11,9 @@ def repl():
             code = input("$ ")
             if code.strip().lower() in ["", "exit", "quit", "e", "q"]:
                 break
-            print(f"> {run(code, env)}")
+            value = run(code, env)
+            if value is not None:
+                print(f"> {value}")
         except EOFError:
             break
         except Exception as err:  # noqa: BLE001
