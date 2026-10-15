@@ -7,6 +7,7 @@
      | expr
 
 ?expr: cmp
+     | "if" expr "then" expr ["else" expr] -> if_then
 
 ?cmp: sum
    | sum (CMP sum)+ -> compare

@@ -70,6 +70,12 @@ class Evaluator(Interpreter):
         self.check(name)
         return self.env[name]
 
+    def if_then(self, tree):
+        cond, then, other = tree.children
+        if self.visit(cond) != 0:
+            return self.visit(then)
+        return self.visit(other) if other else None
+
     @visit_children_decor
     def num(self, args):
         return int(args[0].replace("_", ""))
