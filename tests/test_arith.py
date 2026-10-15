@@ -1,5 +1,4 @@
 import pytest
-from lark.exceptions import VisitError
 
 from jig import run
 
@@ -55,7 +54,7 @@ x
 
 @pytest.mark.parametrize("src", ["1 / 0", "1 // 0", "1 % 0"])
 def test_zero_division(src):
-    with pytest.raises(VisitError):
+    with pytest.raises(ZeroDivisionError):
         run(src)
 
 

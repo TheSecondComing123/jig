@@ -21,7 +21,7 @@
       | atom POW power -> binary
       | UNARY power -> unary
 
-?atom: NUMBER
+?atom: NUMBER -> num
      | NAME -> name
      | "(" expr ")"
 
