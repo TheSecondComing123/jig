@@ -41,24 +41,33 @@ class Evaluator(Interpreter):
     def say(self, args):
         print(args[0])
 
+    def check(self, name):
+        if name not in self.env:
+            raise NameError(f"undefined name `{name}`")
+
     @visit_children_decor
     def declare(self, args):
         name, value = args
+        if name in self.env:
+            raise NameError(f"`{name}` is already defined")
         self.env[name] = value
 
     @visit_children_decor
     def assign(self, args):
         name, value = args
+        self.check(name)
         self.env[name] = value
 
     @visit_children_decor
     def augset(self, args):
         name, op, value = args
+        self.check(name)
         self.env[name] = BINARY_OPS[op[:-1]](self.env[name], value)
 
     @visit_children_decor
     def name(self, args):
         name = args[0]
+        self.check(name)
         return self.env[name]
 
     @visit_children_decor

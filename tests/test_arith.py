@@ -58,6 +58,23 @@ def test_zero_division(src):
         run(src)
 
 
+@pytest.mark.parametrize(
+    "src",
+    [
+        "x + 1",
+        "x = 1",
+        "x += 1",
+        """
+x := 1
+x := 1
+""",
+    ],
+)
+def test_variable_error(src):
+    with pytest.raises(NameError):
+        run(src)
+
+
 def test_syntax_error():
     with pytest.raises(Exception, match="Unexpected"):
         run("1 +")
