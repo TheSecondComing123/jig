@@ -1,4 +1,5 @@
 import operator
+from contextlib import contextmanager
 
 from lark import Lark
 from lark.visitors import Interpreter, visit_children_decor
@@ -63,6 +64,15 @@ class Evaluator(Interpreter):
     def __init__(self, env):
         self.env = env
 
+    @contextmanager
+    def scope(self):
+        saved = self.env
+        self.env = Env(saved)
+        try:
+            yield
+        finally:
+            self.env = saved
+
     @visit_children_decor
     def program(self, stmts):
         return stmts[-1]
@@ -95,6 +105,14 @@ class Evaluator(Interpreter):
         if self.visit(cond) != 0:
             return self.visit(then)
         return self.visit(other) if other else None
+
+    def block(self, tree):
+        value = None
+        with self.scope():
+            for stmt in tree.children:
+                if stmt:
+                    value = self.visit(stmt)
+        return value
 
     @visit_children_decor
     def num(self, args):

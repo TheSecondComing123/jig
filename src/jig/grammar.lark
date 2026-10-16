@@ -9,6 +9,8 @@
 ?expr: cmp
      | "if" expr "then" expr ["else" expr] -> if_then
 
+block: "{" _NL? [stmt (_NL stmt)* _NL?] "}"
+
 ?cmp: sum
    | sum (CMP sum)+ -> compare
 
@@ -25,6 +27,7 @@
 ?atom: NUMBER -> num
      | NAME -> name
      | "(" expr ")"
+     | block
 
 AUGOP: /(\+|-|\*|\/\/|\/|%)=/
 CMP: "==" | "!=" | "<=" | ">=" | "<" | ">"
@@ -35,6 +38,6 @@ UNARY: "-"
 
 NUMBER: /\d[\d_]*/
 NAME: /[A-Za-z_]\w*/
-_NL: /\n+/
+_NL: /(;|\n)([ \t\r]*(;|\n))*/
 
 %ignore /[ \t\r]+/

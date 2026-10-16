@@ -7,6 +7,7 @@ from jig import run
     "src",
     [
         "",
+        ";",
         """
 """,
     ],
