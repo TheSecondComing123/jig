@@ -29,6 +29,36 @@ UNARY_OPS = {
 }
 
 
+class Env:
+    def __init__(self, parent=None, vars=None):
+        self.parent = parent
+        self.vars = {} if vars is None else vars
+
+    def owner(self, name):
+        env = self
+        while env:
+            if name in env.vars:
+                return env
+            env = env.parent
+
+    def existing(self, name):
+        env = self.owner(name)
+        if env is None:
+            raise NameError(f"undefined name `{name}`")
+        return env.vars
+
+    def get(self, name):
+        return self.existing(name)[name]
+
+    def set(self, name, value):
+        self.existing(name)[name] = value
+
+    def declare(self, name, value):
+        if self.owner(name):
+            raise NameError(f"`{name}` is already defined")
+        self.vars[name] = value
+
+
 class Evaluator(Interpreter):
     def __init__(self, env):
         self.env = env
@@ -41,34 +71,24 @@ class Evaluator(Interpreter):
     def say(self, args):
         print(args[0])
 
-    def check(self, name):
-        if name not in self.env:
-            raise NameError(f"undefined name `{name}`")
-
     @visit_children_decor
     def declare(self, args):
         name, value = args
-        if name in self.env:
-            raise NameError(f"`{name}` is already defined")
-        self.env[name] = value
+        self.env.declare(name, value)
 
     @visit_children_decor
     def assign(self, args):
         name, value = args
-        self.check(name)
-        self.env[name] = value
+        self.env.set(name, value)
 
     @visit_children_decor
     def augset(self, args):
         name, op, value = args
-        self.check(name)
-        self.env[name] = BINARY_OPS[op[:-1]](self.env[name], value)
+        self.env.set(name, BINARY_OPS[op[:-1]](self.env.get(name), value))
 
     @visit_children_decor
     def name(self, args):
-        name = args[0]
-        self.check(name)
-        return self.env[name]
+        return self.env.get(args[0])
 
     def if_then(self, tree):
         cond, then, other = tree.children
@@ -105,4 +125,4 @@ class Evaluator(Interpreter):
 def evaluate(src, env=None):
     if env is None:
         env = {}
-    return Evaluator(env).visit(parser.parse(src))
+    return Evaluator(Env(vars=env)).visit(parser.parse(src))
