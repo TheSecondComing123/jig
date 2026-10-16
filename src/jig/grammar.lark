@@ -8,6 +8,7 @@
 
 ?expr: cmp
      | "if" expr "then" expr ["else" expr] -> if_then
+     | "while" expr block -> while_block
 
 block: "{" _NL? [stmt (_NL stmt)* _NL?] "}"
 

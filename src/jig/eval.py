@@ -30,6 +30,10 @@ UNARY_OPS = {
 }
 
 
+def truthy(value):
+    return value is not None and value != 0
+
+
 class Env:
     def __init__(self, parent=None, vars=None):
         self.parent = parent
@@ -102,7 +106,7 @@ class Evaluator(Interpreter):
 
     def if_then(self, tree):
         cond, then, other = tree.children
-        if self.visit(cond) != 0:
+        if truthy(self.visit(cond)):
             return self.visit(then)
         return self.visit(other) if other else None
 
@@ -113,6 +117,11 @@ class Evaluator(Interpreter):
                 if stmt:
                     value = self.visit(stmt)
         return value
+
+    def while_block(self, tree):
+        cond, body = tree.children
+        while truthy(self.visit(cond)):
+            self.visit(body)
 
     @visit_children_decor
     def num(self, args):

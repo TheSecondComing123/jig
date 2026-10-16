@@ -9,6 +9,7 @@ from jig import run
         ("if 1 then -1 else 0", -1),
         ("if 0 then 1 else -1", -1),
         ("if 0 then 1", None),
+        ("if (if 0 then 1) then 1 else -1", -1),
         ("if 1 > 0 then 1 else 0", 1),
         ("if 1 then 1 else 1 / 0", 1),
         ("if 0 then 1 else if 1 then -1 else 0", -1),
