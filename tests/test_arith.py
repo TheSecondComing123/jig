@@ -25,7 +25,8 @@ def test_arith(src, output):
 
 
 @pytest.mark.parametrize(
-    "op,output", [("+=", 0), ("-=", 2), ("*=", -1), ("/=", -1), ("//=", -1), ("%=", 0)]
+    "op,output",
+    [("+=", 0), ("-=", 2), ("*=", -1), ("/=", -1), ("//=", -1), ("%=", 0), ("^=", 1)],
 )
 def test_augmented_assignment(op, output):
     assert (
