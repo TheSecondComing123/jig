@@ -141,8 +141,8 @@ class Evaluator(Interpreter):
         return value
 
     def while_block(self, tree):
-        cond, body = tree.children
-        while truthy(self.visit(cond)):
+        *cond, body = tree.children
+        while not cond or truthy(self.visit(cond[0])):
             try:
                 self.visit(body)
             except Break:

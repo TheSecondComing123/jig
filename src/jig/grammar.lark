@@ -9,6 +9,7 @@
 ?expr: or_
      | "if" expr "then" expr ["else" expr] -> if_then
      | "while" expr block -> while_block
+     | "loop" block -> while_block
      | "break" -> break_
      | "next" -> next_
 
