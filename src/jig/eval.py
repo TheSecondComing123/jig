@@ -1,7 +1,7 @@
 import operator
 from contextlib import contextmanager
 
-from lark import Lark
+from lark import Lark, Tree
 from lark.visitors import Interpreter, visit_children_decor
 
 parser = Lark.open("grammar.lark", rel_to=__file__, parser="lalr", lexer="basic")
@@ -29,6 +29,14 @@ UNARY_OPS = {
     "+": operator.pos,
     "-": operator.neg,
 }
+
+
+class Break(Exception):
+    pass
+
+
+class Next(Exception):
+    pass
 
 
 def truthy(value):
@@ -135,7 +143,18 @@ class Evaluator(Interpreter):
     def while_block(self, tree):
         cond, body = tree.children
         while truthy(self.visit(cond)):
-            self.visit(body)
+            try:
+                self.visit(body)
+            except Break:
+                break
+            except Next:
+                pass
+
+    def break_(self, tree):
+        raise Break
+
+    def next_(self, tree):
+        raise Next
 
     @visit_children_decor
     def num(self, args):
@@ -163,7 +182,17 @@ class Evaluator(Interpreter):
         return UNARY_OPS[op](operand)
 
 
+def check_loops(tree, in_loop=False):
+    if tree.data in ("break_", "next_") and not in_loop:
+        raise SyntaxError(f"`{tree.data[:-1]}` outside a loop")
+    for child in tree.children:
+        if isinstance(child, Tree):
+            check_loops(child, in_loop or tree.data == "while_block")
+
+
 def evaluate(src, env=None):
     if env is None:
         env = {}
-    return Evaluator(Env(vars=env)).visit(parser.parse(src))
+    tree = parser.parse(src)
+    check_loops(tree)
+    return Evaluator(Env(vars=env)).visit(tree)

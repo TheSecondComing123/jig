@@ -9,6 +9,8 @@
 ?expr: or_
      | "if" expr "then" expr ["else" expr] -> if_then
      | "while" expr block -> while_block
+     | "break" -> break_
+     | "next" -> next_
 
 block: "{" _NL? [stmt (_NL stmt)* _NL?] "}"
 

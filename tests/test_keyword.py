@@ -4,8 +4,9 @@ from jig import run
 
 
 @pytest.mark.parametrize(
-    "name", ["if", "then", "else", "while", "and", "or", "not", "say"]
+    "name",
+    ["if", "then", "else", "while", "and", "or", "not", "break", "next", "say"],
 )
 def test_keyword_is_not_a_name(name):
     with pytest.raises(Exception, match="Unexpected"):
-        run(f"x := {name}")
+        run(f"{name} := 1")
