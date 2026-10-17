@@ -4,7 +4,7 @@ from contextlib import contextmanager
 from lark import Lark
 from lark.visitors import Interpreter, visit_children_decor
 
-parser = Lark.open("grammar.lark", rel_to=__file__, parser="lalr")
+parser = Lark.open("grammar.lark", rel_to=__file__, parser="lalr", lexer="basic")
 
 BINARY_OPS = {
     "+": operator.add,
