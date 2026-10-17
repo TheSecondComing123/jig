@@ -41,6 +41,19 @@ x
     )
 
 
+def test_augmented_assignment_reads_left_first():
+    assert (
+        run(
+            """
+x := 1
+x += { x = 5; 1 }
+x
+"""
+        )
+        == 2
+    )
+
+
 def test_variables():
     assert (
         run(

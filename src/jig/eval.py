@@ -104,10 +104,10 @@ class Evaluator(Interpreter):
         name, value = args
         self.env.set(name, value)
 
-    @visit_children_decor
-    def augset(self, args):
-        name, op, value = args
-        self.env.set(name, BINARY_OPS[op[:-1]](self.env.get(name), value))
+    def augset(self, tree):
+        name, op, value = tree.children
+        old = self.env.get(name)
+        self.env.set(name, BINARY_OPS[op[:-1]](old, self.visit(value)))
 
     @visit_children_decor
     def name(self, args):
