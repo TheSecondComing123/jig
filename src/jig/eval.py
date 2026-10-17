@@ -110,6 +110,19 @@ class Evaluator(Interpreter):
             return self.visit(then)
         return self.visit(other) if other else None
 
+    def or_op(self, tree):
+        left, right = tree.children
+        value = self.visit(left)
+        return value if truthy(value) else self.visit(right)
+
+    def and_op(self, tree):
+        left, right = tree.children
+        value = self.visit(left)
+        return self.visit(right) if truthy(value) else value
+
+    def not_op(self, tree):
+        return int(not truthy(self.visit(tree.children[0])))
+
     def block(self, tree):
         value = None
         with self.scope():

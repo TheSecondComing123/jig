@@ -6,11 +6,20 @@
      | "say" expr -> say
      | expr
 
-?expr: cmp
+?expr: or_
      | "if" expr "then" expr ["else" expr] -> if_then
      | "while" expr block -> while_block
 
 block: "{" _NL? [stmt (_NL stmt)* _NL?] "}"
+
+?or_: and_
+    | or_ "or" and_ -> or_op
+
+?and_: not_
+     | and_ "and" not_ -> and_op
+
+?not_: cmp
+     | "not" not_ -> not_op
 
 ?cmp: sum
    | sum (CMP sum)+ -> compare
