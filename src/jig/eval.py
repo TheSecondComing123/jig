@@ -26,6 +26,7 @@ CMP_OPS = {
 }
 
 UNARY_OPS = {
+    "+": operator.pos,
     "-": operator.neg,
 }
 

@@ -32,7 +32,7 @@ block: "{" _NL? [stmt (_NL stmt)* _NL?] "}"
 
 ?power: atom
       | atom POW power -> binary
-      | UNARY power -> unary
+      | ADD power -> unary
 
 ?atom: NUMBER -> num
      | NAME -> name
@@ -44,7 +44,6 @@ CMP: "==" | "!=" | "<=" | ">=" | "<" | ">"
 ADD: "+" | "-"
 MUL: "*" | "//" | "/" | "%"
 POW: "^"
-UNARY: "-"
 
 NUMBER: /\d[\d_]*/
 NAME: /[A-Za-z_]\w*/
