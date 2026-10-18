@@ -24,8 +24,20 @@ block: "{" _NL? [stmt (_NL stmt)* _NL?] "}"
 ?not_: cmp
      | "not" not_ -> not_op
 
-?cmp: sum
-   | sum (CMP sum)+ -> compare
+?cmp: bor
+   | bor (CMP bor)+ -> compare
+
+?bor: bxor
+    | bor BOR bxor -> binary
+
+?bxor: band
+     | bxor BXOR band -> binary
+
+?band: shift
+     | band BAND shift -> binary
+
+?shift: sum
+      | shift SHIFT sum -> binary
 
 ?sum: product
     | sum ADD product -> binary
@@ -36,17 +48,23 @@ block: "{" _NL? [stmt (_NL stmt)* _NL?] "}"
 ?power: atom
       | atom POW power -> binary
       | ADD power -> unary
+      | INV power -> unary
 
 ?atom: NUMBER -> num
      | NAME -> name
      | "(" expr ")"
      | block
 
-AUGOP: /(\+|-|\*|\/\/|\/|%|\^)=/
+AUGOP.3: /(\+|-|\*\*|\*|\/\/|\/|%|\^|&|\||<<|>>)=/
 CMP: "==" | "!=" | "<=" | ">=" | "<" | ">"
 ADD: "+" | "-"
 MUL: "*" | "//" | "/" | "%"
-POW: "^"
+POW.2: "**"
+BOR: "|"
+BXOR: "^"
+BAND: "&"
+SHIFT.2: "<<" | ">>"
+INV: "~"
 
 NUMBER: /\d[\d_]*/
 NAME: /[A-Za-z_]\w*/

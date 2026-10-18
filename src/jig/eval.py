@@ -13,7 +13,12 @@ BINARY_OPS = {
     "/": operator.truediv,
     "//": operator.floordiv,
     "%": operator.mod,
-    "^": operator.pow,
+    "**": operator.pow,
+    "&": operator.and_,
+    "|": operator.or_,
+    "^": operator.xor,
+    "<<": operator.lshift,
+    ">>": operator.rshift,
 }
 
 CMP_OPS = {
@@ -28,6 +33,7 @@ CMP_OPS = {
 UNARY_OPS = {
     "+": operator.pos,
     "-": operator.neg,
+    "~": operator.invert,
 }
 
 
