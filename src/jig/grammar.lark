@@ -51,6 +51,7 @@ block: "{" _NL? [stmt (_NL stmt)* _NL?] "}"
       | INV power -> unary
 
 ?atom: NUMBER -> num
+     | TEXT -> text
      | NAME -> name
      | "(" expr ")"
      | block
@@ -67,6 +68,7 @@ SHIFT.2: "<<" | ">>"
 INV: "~"
 
 NUMBER: /\d[\d_]*/
+TEXT: /"[^"\\\n{]*"/
 NAME: /[A-Za-z_]\w*/
 _NL: /(;|\n)([ \t\r]*(;|\n))*/
 

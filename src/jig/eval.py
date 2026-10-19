@@ -46,7 +46,13 @@ class Next(Exception):
 
 
 def truthy(value):
-    return value is not None and value != 0
+    return value not in (None, 0, "")
+
+
+def arith(op, left, right):
+    if isinstance(left, str) or isinstance(right, str):
+        raise TypeError(f"`{op}` needs numbers, got text")
+    return BINARY_OPS[op](left, right)
 
 
 class Env:
@@ -113,7 +119,7 @@ class Evaluator(Interpreter):
     def augset(self, tree):
         name, op, value = tree.children
         old = self.env.get(name)
-        self.env.set(name, BINARY_OPS[op[:-1]](old, self.visit(value)))
+        self.env.set(name, arith(op[:-1], old, self.visit(value)))
 
     @visit_children_decor
     def name(self, args):
@@ -167,14 +173,20 @@ class Evaluator(Interpreter):
         return int(args[0].replace("_", ""))
 
     @visit_children_decor
+    def text(self, args):
+        return args[0][1:-1]
+
+    @visit_children_decor
     def binary(self, args):
         left, op, right = args
-        return BINARY_OPS[op](left, right)
+        return arith(op, left, right)
 
     def compare(self, tree):
         left = self.visit(tree.children[0])
         for op, node in zip(tree.children[1::2], tree.children[2::2]):
             right = self.visit(node)
+            if isinstance(left, str) != isinstance(right, str):
+                raise TypeError("can't compare text and a number")
             if not CMP_OPS[op](left, right):
                 return 0
             left = right
