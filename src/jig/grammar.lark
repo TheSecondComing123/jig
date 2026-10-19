@@ -15,6 +15,10 @@
 
 block: "{" _NL? [stmt (_NL stmt)* _NL?] "}"
 
+text: "\"" text_part* "\"" -> text
+?text_part: TEXT_CHUNK
+          | "{" expr "}" -> interpolation
+
 ?or_: and_
     | or_ "or" and_ -> or_op
 
@@ -51,7 +55,7 @@ block: "{" _NL? [stmt (_NL stmt)* _NL?] "}"
       | INV power -> unary
 
 ?atom: NUMBER -> num
-     | TEXT -> text
+     | text
      | NAME -> name
      | "(" expr ")"
      | block
@@ -68,7 +72,7 @@ SHIFT.2: "<<" | ">>"
 INV: "~"
 
 NUMBER: /\d[\d_]*/
-TEXT: /"[^"\\\n{]*"/
+TEXT_CHUNK: /[^"\\\n{]+/
 NAME: /[A-Za-z_]\w*/
 _NL: /(;|\n)([ \t\r]*(;|\n))*/
 

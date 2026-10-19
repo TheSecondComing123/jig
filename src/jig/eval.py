@@ -1,40 +1,11 @@
-import operator
 from contextlib import contextmanager
 
-from lark import Lark, Tree
+from lark import Lark, Token, Tree
 from lark.visitors import Interpreter, visit_children_decor
 
-parser = Lark.open("grammar.lark", rel_to=__file__, parser="lalr", lexer="basic")
+from jig.constants import BINARY_OPS, CMP_OPS, KEYWORDS, UNARY_OPS
 
-BINARY_OPS = {
-    "+": operator.add,
-    "-": operator.sub,
-    "*": operator.mul,
-    "/": operator.truediv,
-    "//": operator.floordiv,
-    "%": operator.mod,
-    "**": operator.pow,
-    "&": operator.and_,
-    "|": operator.or_,
-    "^": operator.xor,
-    "<<": operator.lshift,
-    ">>": operator.rshift,
-}
-
-CMP_OPS = {
-    "==": operator.eq,
-    "!=": operator.ne,
-    "<": operator.lt,
-    "<=": operator.le,
-    ">": operator.gt,
-    ">=": operator.ge,
-}
-
-UNARY_OPS = {
-    "+": operator.pos,
-    "-": operator.neg,
-    "~": operator.invert,
-}
+parser = Lark.open("grammar.lark", rel_to=__file__, parser="lalr", lexer="contextual")
 
 
 class Break(Exception):
@@ -174,7 +145,11 @@ class Evaluator(Interpreter):
 
     @visit_children_decor
     def text(self, args):
-        return args[0][1:-1]
+        return "".join(map(str, args))
+
+    @visit_children_decor
+    def interpolation(self, args):
+        return str(args[0])
 
     @visit_children_decor
     def binary(self, args):
@@ -202,6 +177,8 @@ def check_loops(tree, in_loop=False):
     if tree.data in ("break_", "next_") and not in_loop:
         raise SyntaxError(f"`{tree.data[:-1]}` outside a loop")
     for child in tree.children:
+        if isinstance(child, Token) and child.type == "NAME" and child in KEYWORDS:
+            raise SyntaxError(f"Unexpected keyword `{child}`")
         if isinstance(child, Tree):
             check_loops(child, in_loop or tree.data == "while_block")
 
